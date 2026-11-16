@@ -1,0 +1,127 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report, ConfusionMatrixDisplay
+
+
+# ==================== CELL 3: Step 2: Load the dataset ====================
+
+data = load_breast_cancer()
+
+X = pd.DataFrame(data.data, columns=data.feature_names)
+y = data.target
+
+print("Dataset shape:", X.shape)
+print("Target names:", data.target_names)
+print("Missing values:", X.isnull().sum().sum())
+
+
+# ==================== CELL 5: Step 3: Check multicollinearity ====================
+# Multicollinearity means that two or more input features are strongly correlated. We use a correlation matrix to observe it.
+
+corr = X.corr()
+
+plt.figure(figsize=(10, 8))
+plt.imshow(corr, cmap="coolwarm", vmin=-1, vmax=1)
+plt.colorbar()
+plt.title("Correlation Heatmap")
+plt.tight_layout()
+plt.show()
+
+print("Highest feature correlation:")
+print(corr.where(corr != 1).abs().stack().sort_values(ascending=False).head())
+
+
+# ==================== CELL 7: Step 4: Split and scale the data ====================
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+
+# ==================== CELL 9: Step 5: Train the models ====================
+# - Baseline: Logistic Regression
+# - L1: Lasso-style regularization; can make some coefficients zero.
+# - L2: Ridge-style regularization; reduces coefficient values.
+
+models = {
+    "Logistic Regression": LogisticRegression(penalty=None, max_iter=5000),
+    "L1 (Lasso)": LogisticRegression(penalty="l1", solver="liblinear", C=1),
+    "L2 (Ridge)": LogisticRegression(penalty="l2", solver="liblinear", C=1)
+}
+
+results = []
+coefficients = {}
+
+for name, model in models.items():
+    model.fit(X_train, y_train)
+
+    train_pred = model.predict(X_train)
+    test_pred = model.predict(X_test)
+
+    results.append([
+        name,
+        accuracy_score(y_train, train_pred),
+        accuracy_score(y_test, test_pred)
+    ])
+
+    coefficients[name] = model.coef_[0]
+
+results = pd.DataFrame(
+    results, columns=["Model", "Train Accuracy", "Test Accuracy"]
+)
+
+print(results.round(4))
+
+
+# ==================== CELL 11: Step 6: Compare train and test accuracy ====================
+
+results.set_index("Model")[["Train Accuracy", "Test Accuracy"]].plot(
+    kind="bar", figsize=(8, 4)
+)
+plt.ylabel("Accuracy")
+plt.title("Train vs Test Accuracy")
+plt.xticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+
+# ==================== CELL 13: Step 7: Compare coefficients and count zero coefficients ====================
+
+coef_df = pd.DataFrame(coefficients, index=data.feature_names)
+
+print(coef_df.round(3))
+
+print("\\nNumber of zero coefficients in L1:",
+      (coef_df["L1 (Lasso)"] == 0).sum())
+
+coef_df[["Logistic Regression", "L1 (Lasso)", "L2 (Ridge)"]].plot(
+    kind="bar", figsize=(14, 5), legend=True
+)
+plt.title("Coefficient Comparison")
+plt.ylabel("Coefficient value")
+plt.tight_layout()
+plt.show()
+
+
+# ==================== CELL 15: Step 8: Confusion matrix and classification report ====================
+
+best_model = models["L1 (Lasso)"]
+best_model.fit(X_train, y_train)
+
+ConfusionMatrixDisplay.from_estimator(best_model, X_test, y_test)
+plt.title("Confusion Matrix - L1 (Lasso)")
+plt.show()
+
+print(classification_report(
+    y_test, best_model.predict(X_test), target_names=data.target_names
+))
+

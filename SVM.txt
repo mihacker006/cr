@@ -1,0 +1,100 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.metrics import (accuracy_score, precision_score, recall_score, f1_score,
+                             confusion_matrix, ConfusionMatrixDisplay)
+
+
+# ==================== CELL 3: Step 2: Load the dataset ====================
+
+data = load_wine()
+X = data.data                 # 13 chemical measurements per wine
+y = data.target               # 3 wine classes: 0, 1, 2
+
+print("X shape:", X.shape)                          # (178, 13)
+print("Class names:", data.target_names)
+print("Samples per class:", np.bincount(y))         # [59 71 48]
+print("Missing values:", np.isnan(X).sum())         # 0
+
+
+# ==================== CELL 5: Step 3: Split 70:30 (stratified, random_state=42) ====================
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42, stratify=y)
+print("Train:", X_train.shape, " Test:", X_test.shape)
+
+
+# ==================== CELL 7: Step 4: Scale the features (fit on train only). Scaling matters a lot for SVM ====================
+
+scaler = StandardScaler()
+X_train_s = scaler.fit_transform(X_train)
+X_test_s = scaler.transform(X_test)
+
+
+# ==================== CELL 9: Step 5: Train one SVM for each kernel ====================
+# For each kernel we train, predict, and save the metrics and the confusion matrix.
+# There are 3 classes, so precision, recall and F1 use `average="macro"` (the simple average over the 3 classes).
+
+
+# ==================== CELL 10: Code ====================
+
+kernels = ["linear", "poly", "rbf"]
+rows = []
+conf_matrices = {}
+
+for kernel in kernels:
+    svm = SVC(kernel=kernel, C=1, gamma="scale", degree=3)
+    svm.fit(X_train_s, y_train)
+
+    y_pred = svm.predict(X_test_s)
+
+    rows.append([kernel,
+                 accuracy_score(y_train, svm.predict(X_train_s)),
+                 accuracy_score(y_test, y_pred),
+                 precision_score(y_test, y_pred, average="macro"),
+                 recall_score(y_test, y_pred, average="macro"),
+                 f1_score(y_test, y_pred, average="macro")])
+
+    conf_matrices[kernel] = confusion_matrix(y_test, y_pred)
+
+
+# ==================== CELL 11: Step 6: Comparison table ====================
+
+results = pd.DataFrame(rows, columns=["Kernel", "Train accuracy", "Test accuracy",
+                                      "Precision", "Recall", "F1-score"])
+print(results.round(4))
+
+
+# ==================== CELL 13: Step 7: Confusion matrix for each kernel ====================
+
+for kernel in kernels:
+    print("Kernel:", kernel)
+    print(conf_matrices[kernel])
+    print()
+
+
+# ==================== CELL 15: Step 8: Graph 1: confusion matrices side by side ====================
+
+fig, ax = plt.subplots(1, 3, figsize=(14, 4))
+for i, kernel in enumerate(kernels):
+    ConfusionMatrixDisplay(conf_matrices[kernel], display_labels=data.target_names).plot(
+        ax=ax[i], cmap="Blues", colorbar=False)
+    ax[i].set_title(f"{kernel} kernel")
+plt.tight_layout()
+plt.show()
+
+
+# ==================== CELL 17: Step 9: Graph 2: accuracy of each kernel ====================
+
+plt.bar(results["Kernel"], results["Test accuracy"], color=["steelblue", "orange", "green"])
+plt.ylim(0.8, 1.0)
+plt.ylabel("Test accuracy")
+plt.title("SVM kernel comparison (Wine)")
+for i, acc in enumerate(results["Test accuracy"]):
+    plt.text(i, acc + 0.003, f"{acc:.3f}", ha="center")      # write the value above each bar
+plt.show()
+

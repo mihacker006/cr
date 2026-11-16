@@ -1,0 +1,104 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
+
+# ==================== CELL 3: Step 2: Load the dataset ====================
+
+data = load_iris()
+X = data.data              # 4 features (all in cm): sepal length/width, petal length/width
+y = data.target            # species: NOT used for clustering (check only)
+
+print("X shape:", X.shape)                      # (150, 4)
+print("Features:", data.feature_names)
+print("Missing values:", np.isnan(X).sum())     # 0
+
+
+# ==================== CELL 6: Code ====================
+
+k_values = range(2, 8)
+inertia = []
+silhouette = []
+
+for k in k_values:
+    km = KMeans(n_clusters=k, n_init=10, random_state=42)
+    labels = km.fit_predict(X)                       # fit and give a cluster number to every flower
+    inertia.append(km.inertia_)
+    silhouette.append(silhouette_score(X, labels))
+
+
+# ==================== CELL 7: Step 4: Results table ====================
+
+
+# ==================== CELL 8: Code ====================
+
+results = pd.DataFrame({
+    "K": list(k_values),
+    "Inertia": inertia,
+    "Silhouette score": silhouette
+})
+results["Inertia drop"] = results["Inertia"].diff().abs()      # how much the inertia fell compared with the previous K
+print(results.round(3))
+
+print("K with the highest silhouette score:", results.loc[results["Silhouette score"].idxmax(), "K"])
+
+
+# ==================== CELL 9: Step 5: Graph 1: Elbow plot ====================
+
+
+# ==================== CELL 10: Code ====================
+
+plt.plot(k_values, inertia, marker="o")
+plt.axvline(3, color="red", linestyle="--", label="Elbow at K = 3")
+plt.xlabel("Number of clusters (K)")
+plt.ylabel("Inertia")
+plt.title("Elbow method")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+# ==================== CELL 11: Step 6: Graph 2: Silhouette plot ====================
+
+
+# ==================== CELL 12: Code ====================
+
+plt.plot(k_values, silhouette, marker="o", color="green")
+plt.xlabel("Number of clusters (K)")
+plt.ylabel("Silhouette score")
+plt.title("Silhouette score for each K")
+plt.grid(True)
+plt.show()
+
+
+# ==================== CELL 13: Step 7: Final model with K = 3 and the cluster scatter plot ====================
+
+
+# ==================== CELL 14: Code ====================
+
+km = KMeans(n_clusters=3, n_init=10, random_state=42)
+labels = km.fit_predict(X)
+centers = km.cluster_centers_
+
+# plot using petal length (column 2) and petal width (column 3)
+plt.scatter(X[:, 2], X[:, 3], c=labels, cmap="viridis", s=40)
+plt.scatter(centers[:, 2], centers[:, 3], c="red", marker="X", s=250, label="Cluster centres")
+plt.xlabel(data.feature_names[2])
+plt.ylabel(data.feature_names[3])
+plt.title("K-Means clusters (K = 3)")
+plt.legend()
+plt.show()
+
+
+# ==================== CELL 15: Step 8: Check the clusters against the real species (check only, not used for training) ====================
+
+
+# ==================== CELL 16: Code ====================
+
+check = pd.crosstab(pd.Series(data.target_names[y], name="Species"),
+                    pd.Series(labels, name="Cluster"))
+print(check)
+

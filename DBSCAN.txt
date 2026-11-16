@@ -1,0 +1,107 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import DBSCAN
+
+
+# ==================== CELL 3: Step 2: Load the dataset (features only) ====================
+
+data = load_iris()
+X = data.data              # 4 features
+y = data.target            # species: NOT used for clustering (check only)
+
+print("X shape:", X.shape)                      # (150, 4)
+print("Missing values:", np.isnan(X).sum())     # 0
+
+
+
+# ==================== CELL 6: Code ====================
+
+scaler = StandardScaler()
+X_s = scaler.fit_transform(X)
+
+
+# ==================== CELL 7: Step 4: Run DBSCAN with eps = 0.5 and min_samples = 5 ====================
+# - `eps` = the radius of the neighbourhood around a point
+# - `min_samples` = the number of points needed inside that radius to form a dense (core) region
+#
+# DBSCAN gives every point a cluster number. The label -1 means noise (the point belongs to no cluster).
+
+
+# ==================== CELL 8: Code ====================
+
+db = DBSCAN(eps=0.5, min_samples=5)
+labels = db.fit_predict(X_s)
+
+n_clusters = len(set(labels)) - (1 if -1 in labels else 0)      # do not count the noise label -1 as a cluster
+n_noise = np.sum(labels == -1)
+
+print("Number of clusters:", n_clusters)          # 2
+print("Number of noise points:", n_noise)         # 34
+print("Points per label (-1 = noise):")
+print(pd.Series(labels).value_counts().sort_index())
+
+
+# ==================== CELL 9: Step 5: Graph 1: clusters and noise points ====================
+
+
+# ==================== CELL 10: Code ====================
+
+is_noise = labels == -1
+
+# plot using petal length (column 2) and petal width (column 3) of the scaled data
+plt.scatter(X_s[~is_noise, 2], X_s[~is_noise, 3], c=labels[~is_noise], cmap="viridis", s=40, label="Clustered points")
+plt.scatter(X_s[is_noise, 2], X_s[is_noise, 3], c="red", marker="x", s=60, label="Noise points (-1)")
+plt.xlabel(data.feature_names[2] + " (scaled)")
+plt.ylabel(data.feature_names[3] + " (scaled)")
+plt.title("DBSCAN on Iris (eps = 0.5, min_samples = 5)")
+plt.legend()
+plt.show()
+
+
+# ==================== CELL 11: Step 6: Effect of eps and min_samples ====================
+
+
+# ==================== CELL 12: Code ====================
+
+rows = []
+for eps in [0.4, 0.5, 0.6]:
+    for min_samples in [3, 4, 5]:
+        lab = DBSCAN(eps=eps, min_samples=min_samples).fit_predict(X_s)
+        rows.append([eps, min_samples,
+                     len(set(lab)) - (1 if -1 in lab else 0),
+                     np.sum(lab == -1)])
+
+param_table = pd.DataFrame(rows, columns=["eps", "min_samples", "Clusters", "Noise points"])
+print(param_table)
+
+
+# ==================== CELL 13: Step 7: Graph 2: noise points for each setting ====================
+
+
+# ==================== CELL 14: Code ====================
+
+for min_samples in [3, 4, 5]:
+    subset = param_table[param_table["min_samples"] == min_samples]
+    plt.plot(subset["eps"], subset["Noise points"], marker="o", label=f"min_samples = {min_samples}")
+
+plt.xlabel("eps")
+plt.ylabel("Number of noise points")
+plt.title("Effect of eps and min_samples on noise points")
+plt.xticks([0.4, 0.5, 0.6])
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+# ==================== CELL 15: Step 8: Species check (check only, not used for clustering) ====================
+
+
+# ==================== CELL 16: Code ====================
+
+check = pd.crosstab(pd.Series(data.target_names[y], name="Species"),
+                    pd.Series(labels, name="DBSCAN label (-1 = noise)"))
+print(check)
+

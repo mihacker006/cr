@@ -1,0 +1,172 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+# ==================== CELL 3: Step 2: Build the environment ====================
+# - A state is a cell number (0 to 15). A cell number converts to (row, column) with divmod(state, 4).
+# - There are 4 actions: 0 = up, 1 = down, 2 = left, 3 = right. Moving into a wall keeps the agent in the same cell.
+# - step(state, action) returns the next state, the reward and whether the episode is finished.
+
+
+# ==================== CELL 4: Code ====================
+
+N = 4                          # grid size (4 x 4)
+n_states = N * N               # 16 states
+n_actions = 4
+START, GOAL = 0, 15
+action_names = ["up", "down", "left", "right"]
+arrows = ["↑", "↓", "←", "→"]
+
+def step(state, action):
+    row, col = divmod(state, N)                 # state number -> (row, column)
+    if action == 0:   row = max(row - 1, 0)     # up
+    elif action == 1: row = min(row + 1, N - 1) # down
+    elif action == 2: col = max(col - 1, 0)     # left
+    else:             col = min(col + 1, N - 1) # right
+    next_state = row * N + col                  # (row, column) -> state number
+
+    if next_state == GOAL:
+        return next_state, 10, True             # reached the goal: reward +10, episode ends
+    return next_state, -1, False                # every other step costs -1
+
+
+# ==================== CELL 5: Step 3: The Q-Learning function ====================
+# The Q-table has one row per state and one column per action. Q[s, a] is how good it is to take action a in state s. It starts as all zeros.
+#
+# In every step:
+# 1. Choose an action with epsilon-greedy: with probability epsilon pick a random action (explore), otherwise pick the best known action argmax(Q[state]) (exploit).
+# 2. Take the action and observe the reward and the next state.
+# 3. Update the Q-table:
+#    Q[s, a] = Q[s, a] + alpha * (reward + gamma * max(Q[next_state]) - Q[s, a])
+# 4. After every episode, decay epsilon so the agent explores less and exploits more.
+
+
+# ==================== CELL 6: Code ====================
+
+def train(eps_start=1.0, eps_min=0.05, eps_decay=0.995,
+          episodes=1000, alpha=0.1, gamma=0.9, max_steps=100, seed=42):
+    np.random.seed(seed)
+    Q = np.zeros((n_states, n_actions))         # Q-table
+    eps = eps_start
+    rewards, eps_history = [], []
+
+    for episode in range(episodes):
+        state, total_reward = START, 0
+
+        for _ in range(max_steps):
+            if np.random.rand() < eps:                     # explore
+                action = np.random.randint(n_actions)
+            else:                                          # exploit
+                action = int(np.argmax(Q[state]))
+
+            next_state, reward, done = step(state, action)
+
+            # Q-learning update
+            Q[state, action] += alpha * (reward + gamma * np.max(Q[next_state]) - Q[state, action])
+
+            state = next_state
+            total_reward += reward
+            if done:
+                break
+
+        rewards.append(total_reward)
+        eps_history.append(eps)
+        eps = max(eps_min, eps * eps_decay)                # decay epsilon, never below eps_min
+
+    return Q, rewards, eps_history
+
+
+# ==================== CELL 7: Step 4: Train the agent (epsilon 1.0 down to 0.05, alpha = 0.1, gamma = 0.9, 1000 episodes) ====================
+
+
+# ==================== CELL 8: Code ====================
+
+Q, rewards, eps_history = train()
+
+print("Average reward of the first 100 episodes:", round(np.mean(rewards[:100]), 2))
+print("Average reward of the last 100 episodes :", round(np.mean(rewards[-100:]), 2))
+print("Best possible reward per episode: 5   (5 steps x -1, then +10 at the goal)")
+print("Final epsilon:", round(eps_history[-1], 3))
+
+
+# ==================== CELL 9: Step 5: Look at the learned Q-table ====================
+
+
+# ==================== CELL 10: Code ====================
+
+q_table = pd.DataFrame(Q, columns=action_names)
+q_table.index.name = "state"
+print(q_table.round(2))
+
+
+# ==================== CELL 11: Step 6: Graph 1: reward per episode ====================
+
+
+# ==================== CELL 12: Code ====================
+
+moving_avg = np.convolve(rewards, np.ones(50) / 50, mode="valid")      # average of every 50 episodes
+
+plt.plot(rewards, alpha=0.4, label="Reward per episode")
+plt.plot(range(49, len(rewards)), moving_avg, color="red", linewidth=2, label="Moving average (50 episodes)")
+plt.xlabel("Episode")
+plt.ylabel("Total reward")
+plt.title("Q-Learning: reward per episode")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+# ==================== CELL 13: Step 7: Graph 2: epsilon decay (exploration to exploitation) ====================
+
+
+# ==================== CELL 14: Code ====================
+
+plt.plot(eps_history)
+plt.axhline(0.05, color="red", linestyle="--", label="Minimum epsilon = 0.05")
+plt.xlabel("Episode")
+plt.ylabel("Epsilon")
+plt.title("Epsilon decay")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+# ==================== CELL 15: Step 8: The learned policy (arrows) and the best path from start to goal ====================
+
+
+# ==================== CELL 16: Code ====================
+
+policy = np.array([arrows[int(np.argmax(Q[s]))] for s in range(n_states)]).reshape(N, N)
+policy[GOAL // N, GOAL % N] = "G"              # mark the goal cell
+
+print("Learned policy (best action in every cell):")
+for row in policy:
+    print("  ".join(row))
+
+# follow the best action from the start until the goal is reached
+state, path = START, [START]
+while state != GOAL and len(path) < 20:
+    state, _, _ = step(state, int(np.argmax(Q[state])))
+    path.append(state)
+
+print("\nBest path (cell numbers):", path)
+print("Number of moves:", len(path) - 1)
+
+
+# ==================== CELL 17: Graph 3: policy arrows with the best path in green ====================
+
+grid = np.zeros((N, N))
+for s in path:
+    grid[s // N, s % N] = 1
+
+fig, ax = plt.subplots(figsize=(4, 4))
+ax.imshow(grid, cmap="Greens", vmin=0, vmax=2)
+for s in range(n_states):
+    r, c = divmod(s, N)
+    ax.text(c, r, policy[r, c], ha="center", va="center", fontsize=22)
+ax.set_xticks(range(N))
+ax.set_yticks(range(N))
+ax.set_title("Learned policy (green = best path)")
+plt.show()
+

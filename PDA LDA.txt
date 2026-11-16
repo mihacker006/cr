@@ -1,0 +1,99 @@
+
+import time
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+# 1. Load the dataset (built in, no download needed)
+digits = load_digits()
+X = digits.data        # 64 pixel features per image
+y = digits.target      # digit label 0-9
+
+print("X shape:", X.shape)               # (1797, 64)
+print("Classes:", np.unique(y))          # 0 to 9 -> 10 classes
+
+# 2. Split 70:30 (stratified, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42, stratify=y)
+print("Train:", X_train.shape, " Test:", X_test.shape)
+
+# 3. Scale (fit on TRAIN only, then transform test)
+scaler = StandardScaler()
+X_train_s = scaler.fit_transform(X_train)
+X_test_s = scaler.transform(X_test)
+
+# 4. Baseline: Logistic Regression on all 64 original features
+start = time.perf_counter()
+model_orig = LogisticRegression(max_iter=1000)
+model_orig.fit(X_train_s, y_train)
+time_orig = time.perf_counter() - start
+
+acc_orig = accuracy_score(y_test, model_orig.predict(X_test_s))
+print("Original  -> features:", X_train_s.shape[1], " accuracy:", round(acc_orig, 4), " time(s):", round(time_orig, 4))
+
+# 5. PCA: keep enough components to explain 95% of the variance
+pca = PCA(n_components=0.95)
+X_train_pca = pca.fit_transform(X_train_s)       # learn on train
+X_test_pca = pca.transform(X_test_s)             # only transform test
+print("PCA components kept for 95% variance:", pca.n_components_)
+
+start = time.perf_counter()
+model_pca = LogisticRegression(max_iter=1000)
+model_pca.fit(X_train_pca, y_train)
+time_pca = time.perf_counter() - start
+
+acc_pca = accuracy_score(y_test, model_pca.predict(X_test_pca))
+print("PCA       -> features:", X_train_pca.shape[1], " accuracy:", round(acc_pca, 4), " time(s):", round(time_pca, 4))
+
+# 6. LDA: 9 components (classes - 1 = 10 - 1). LDA uses the labels, so fit on TRAIN labels only
+lda = LinearDiscriminantAnalysis(n_components=9)
+X_train_lda = lda.fit_transform(X_train_s, y_train)
+X_test_lda = lda.transform(X_test_s)
+
+start = time.perf_counter()
+model_lda = LogisticRegression(max_iter=1000)
+model_lda.fit(X_train_lda, y_train)
+time_lda = time.perf_counter() - start
+
+acc_lda = accuracy_score(y_test, model_lda.predict(X_test_lda))
+print("LDA       -> features:", X_train_lda.shape[1], " accuracy:", round(acc_lda, 4), " time(s):", round(time_lda, 4))
+
+# 7. Comparison table
+results = pd.DataFrame({
+    "Method": ["Original", "PCA (95% variance)", "LDA"],
+    "Features": [X_train_s.shape[1], X_train_pca.shape[1], X_train_lda.shape[1]],
+    "Accuracy": [acc_orig, acc_pca, acc_lda],
+    "Training time (s)": [time_orig, time_pca, time_lda]
+}).round(4)
+print(results)
+
+# 8. Graph 1: explained variance plot (PCA with all components)
+pca_full = PCA().fit(X_train_s)
+cum_var = np.cumsum(pca_full.explained_variance_ratio_)
+
+plt.plot(range(1, len(cum_var) + 1), cum_var, marker="o", markersize=3)
+plt.axhline(0.95, color="red", linestyle="--", label="95% variance")
+plt.axvline(pca.n_components_, color="green", linestyle="--", label=f"{pca.n_components_} components")
+plt.xlabel("Number of components")
+plt.ylabel("Cumulative explained variance")
+plt.title("PCA explained variance (Digits)")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# 9. Graph 2: accuracy and training time of the three models
+fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+ax[0].bar(results["Method"], results["Accuracy"])
+ax[0].set_ylim(0.8, 1.0)
+ax[0].set_title("Accuracy")
+ax[1].bar(results["Method"], results["Training time (s)"])
+ax[1].set_title("Training time (s)")
+plt.tight_layout()
+plt.show()

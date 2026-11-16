@@ -1,0 +1,59 @@
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_diabetes
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# 1. Load the dataset (built in, no download needed)
+data = load_diabetes()
+X = pd.DataFrame(data.data, columns=data.feature_names)   # 10 features
+y = data.target                                           # disease progression (a number)
+
+print("X shape:", X.shape)                      # (442, 10)
+print("Missing values:", X.isnull().sum().sum())   # 0 -> no cleaning needed
+X.head()
+
+# 2. Split 80:20 (no stratify, because this is regression)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+print("Train:", X_train.shape, " Test:", X_test.shape)
+
+# 3. Train the model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# 4. Predict on the test set
+y_pred = model.predict(X_test)
+
+# 5. Evaluate: MSE, RMSE, R2
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred)
+
+print("MSE :", round(mse, 2))
+print("RMSE:", round(rmse, 2))
+print("R2  :", round(r2, 4))
+print("R2 on train data:", round(model.score(X_train, y_train), 4))   # to compare with test R2
+
+# 6. Coefficients: how much each feature affects the prediction
+coef_table = pd.DataFrame({"Feature": X.columns, "Coefficient": model.coef_}).round(2)
+print(coef_table)
+print("Intercept:", round(model.intercept_, 2))
+
+# 7. Graph 1: actual vs predicted (required)
+plt.scatter(y_test, y_pred)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], "r--", label="Perfect prediction")
+plt.xlabel("Actual values")
+plt.ylabel("Predicted values")
+plt.title("Actual vs Predicted (Diabetes)")
+plt.legend()
+plt.show()
+
+# 8. Graph 2 (optional): coefficient bar chart
+plt.bar(coef_table["Feature"], coef_table["Coefficient"])
+plt.title("Coefficients of the linear regression model")
+plt.ylabel("Coefficient")
+plt.show()

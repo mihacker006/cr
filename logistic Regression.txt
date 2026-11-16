@@ -1,0 +1,88 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (accuracy_score, precision_score, recall_score, f1_score,
+                             confusion_matrix, ConfusionMatrixDisplay,
+                             classification_report, roc_curve, roc_auc_score)
+
+
+# ==================== CELL 3: Step 2: Load the dataset ====================
+
+data = load_breast_cancer()
+X = data.data                 # 30 features per tumour
+y = data.target               # 0 = malignant, 1 = benign
+
+print("X shape:", X.shape)                                   # (569, 30)
+print("Class names:", data.target_names)                     # ['malignant' 'benign']
+print("Samples per class:", np.bincount(y))                  # [212 357]
+print("Missing values:", np.isnan(X).sum())                  # 0
+
+
+# ==================== CELL 5: Step 3: Split 80:20 (stratified, random_state=42) ====================
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y)
+print("Train:", X_train.shape, " Test:", X_test.shape)
+
+
+# ==================== CELL 7: Step 4: Scale the features (fit on train only) ====================
+
+scaler = StandardScaler()
+X_train_s = scaler.fit_transform(X_train)     # learn mean/std from train and apply
+X_test_s = scaler.transform(X_test)           # only apply to test
+
+
+# ==================== CELL 9: Step 5: Train the model and predict ====================
+
+model = LogisticRegression(max_iter=1000)
+model.fit(X_train_s, y_train)
+
+y_pred = model.predict(X_test_s)                  # predicted class (0 or 1)
+y_prob = model.predict_proba(X_test_s)[:, 1]      # probability of class 1 (benign), needed for the ROC curve
+
+
+# ==================== CELL 11: Step 6: Confusion matrix ====================
+# Rows = actual class, columns = predicted class. With class 1 (benign) as the positive class:
+# [[TN, FP], [FN, TP]]
+
+
+# ==================== CELL 12: Confusion matrix code ====================
+
+cm = confusion_matrix(y_test, y_pred)
+print(cm)
+
+ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=data.target_names).plot(cmap="Blues")
+plt.title("Confusion matrix (test set)")
+plt.show()
+
+
+# ==================== CELL 13: Step 7: Accuracy, precision, recall and F1-score ====================
+
+print("Accuracy :", round(accuracy_score(y_test, y_pred), 4))
+print("Precision:", round(precision_score(y_test, y_pred), 4))     # for class 1 (benign)
+print("Recall   :", round(recall_score(y_test, y_pred), 4))
+print("F1-score :", round(f1_score(y_test, y_pred), 4))
+
+print()
+print(classification_report(y_test, y_pred, target_names=data.target_names))
+
+
+# ==================== CELL 15: Step 8: ROC curve and AUC ====================
+
+fpr, tpr, thresholds = roc_curve(y_test, y_prob)
+auc = roc_auc_score(y_test, y_prob)
+print("AUC:", round(auc, 4))
+
+plt.plot(fpr, tpr, label=f"Logistic Regression (AUC = {auc:.3f})")
+plt.plot([0, 1], [0, 1], "r--", label="Random guess")
+plt.xlabel("False positive rate")
+plt.ylabel("True positive rate")
+plt.title("ROC curve")
+plt.legend()
+plt.grid(True)
+plt.show()
+

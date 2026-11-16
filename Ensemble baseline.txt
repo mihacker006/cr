@@ -1,0 +1,85 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+
+
+# ==================== CELL 3: Step 2: Load the dataset ====================
+
+data = load_breast_cancer()
+X = data.data                 # 30 features
+y = data.target               # 0 = malignant, 1 = benign
+
+print("X shape:", X.shape)                      # (569, 30)
+print("Samples per class:", np.bincount(y))     # [212 357]
+print("Missing values:", np.isnan(X).sum())     # 0
+
+
+# ==================== CELL 5: Step 3: Split 80:20 (stratified, random_state=42). Tree-based models do not need scaling ====================
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y)
+print("Train:", X_train.shape, " Test:", X_test.shape)
+
+
+# ==================== CELL 7: Step 4: Create the baseline and the ensemble models ====================
+
+models = {
+    "Decision Tree (baseline)": DecisionTreeClassifier(random_state=42),
+    "Random Forest": RandomForestClassifier(n_estimators=100, random_state=42),
+    "Gradient Boosting": GradientBoostingClassifier(random_state=42),
+    "AdaBoost": AdaBoostClassifier(random_state=42)
+}
+
+
+# ==================== CELL 9: Step 5: Train, test and cross-validate every model ====================
+# - Test accuracy: train on the 80% training data and score on the unseen 20%.
+# - 5-fold cross-validation: the data is split into 5 parts, each part is used once as the test set, and the 5 scores are averaged. It gives a more reliable estimate than a single split.
+
+rows = []
+for name, model in models.items():
+    model.fit(X_train, y_train)
+
+    train_acc = model.score(X_train, y_train)
+    test_acc = model.score(X_test, y_test)
+
+    cv_scores = cross_val_score(model, X, y, cv=5, scoring="accuracy")      # 5 scores, one per fold
+
+    rows.append([name, train_acc, test_acc, cv_scores.mean(), cv_scores.std()])
+
+
+# ==================== CELL 11: Step 6: Accuracy table ====================
+
+results = pd.DataFrame(rows, columns=["Model", "Train accuracy", "Test accuracy",
+                                      "5-fold CV accuracy", "CV std"])
+pd.set_option("display.max_columns", None)
+pd.set_option("display.width", 200)
+print(results.round(4))
+
+
+# ==================== CELL 13: Step 7: Graph 1: accuracy of every model ====================
+
+results.set_index("Model")[["Test accuracy", "5-fold CV accuracy"]].plot(kind="bar", figsize=(9, 4))
+plt.ylim(0.85, 1.0)
+plt.ylabel("Accuracy")
+plt.title("Baseline vs ensemble models (Breast Cancer)")
+plt.xticks(rotation=15)
+plt.tight_layout()
+plt.show()
+
+
+# ==================== CELL 15: Step 8: Graph 2: Random Forest feature importance (top 10) ====================
+
+rf = models["Random Forest"]
+importances = rf.feature_importances_                  # one value per feature, they add up to 1
+top = np.argsort(importances)[-10:]                    # positions of the 10 largest values
+
+plt.barh(np.array(data.feature_names)[top], importances[top])
+plt.xlabel("Importance")
+plt.title("Random Forest: top 10 important features")
+plt.tight_layout()
+plt.show()
+
