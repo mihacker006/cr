@@ -1,0 +1,113 @@
+Dataset: Iris | 150 flowers | 4 features
+1. What is Clustering?
+Clustering is a machine learning technique that groups similar data points together.
+
+Data points in the same cluster are more similar to each other than to points in other clusters.
+
+Example:
+
+Grouping customers based on their shopping behavior.
+2. What is Unsupervised Learning?
+Unsupervised learning is a machine learning method that learns patterns from data without using predefined class labels.
+
+It is used to discover hidden patterns and groups.
+
+Examples:
+- Customer segmentation.
+- Grouping similar documents.
+- Finding patterns in data.
+- Clustering flowers based on measurements.
+Your K-Means and DBSCAN experiments use unsupervised learning.
+3. What is K-Means?
+K-Means is an unsupervised clustering algorithm that divides data into K clusters.
+
+Each cluster has a center called a centroid.
+
+The algorithm groups data points based on their distance from the centroids.
+4. What is K?
+K represents the number of clusters.
+
+Example:
+
+If K = 3, the algorithm divides the dataset into three clusters.
+
+The number of clusters must be selected before running the standard K-Means algorithm.
+5. What is a Centroid?
+A centroid is the center of a cluster.
+
+It is calculated using the average of the data points belonging to that cluster.
+
+The centroid represents the cluster.
+6. How Does K-Means Work?
+1. Select the number of clusters K.
+2. Initialize K centroids.
+3. Calculate the distance between each data point and the centroids.
+4. Assign each point to its nearest centroid.
+5. Calculate new centroids.
+6. Repeat until the centroids stop changing significantly.
+7. What is Euclidean Distance?
+Euclidean distance measures the straight-line distance between two points.
+
+For two-dimensional data:
+\[
+d=\sqrt{(x_1-x_2)^2+(y_1-y_2)^2}
+\]
+
+K-Means commonly uses Euclidean distance to assign data points to clusters.
+8. What is Inertia?
+Inertia measures how close data points are to their assigned cluster centers.
+
+It is the sum of squared distances between data points and their centroids.
+\[
+Inertia=\sum_{i=1}^{n}
+\|x_i-\mu_{c_i}\|^2
+\]
+
+Where:
+- \(x_i\) = data point
+- \(\mu_{c_i}\) = centroid of its cluster
+Lower inertia means tighter clusters.
+
+However, inertia generally decreases when K increases.
+
+Therefore, we cannot choose K using inertia alone.
+9. What is the Elbow Method?
+The Elbow Method is used to find a suitable number of clusters.
+Steps
+1. Run K-Means for different values of K.
+2. Calculate inertia for each K.
+3. Plot K against inertia.
+4. Find the point where the decrease in inertia becomes slower.
+This point looks like an elbow.
+
+The elbow gives a reasonable number of clusters.
+
+Your experiment identifies K = 3 as a sensible final choice using the elbow and species comparison.
+10. What is Silhouette Score?
+Silhouette score measures how well a data point fits into its cluster compared with other clusters.
+
+It ranges from -1 to +1.
+- Close to +1: Good clustering.
+- Close to 0: Clusters overlap.
+- Negative: The point may belong to another cluster.
+A higher average silhouette score generally indicates better-separated clusters.
+
+Your experiment finds that K = 2 has a higher silhouette score than K = 3.
+
+This happens because two groups in the Iris dataset are more clearly separated, while the other two species overlap.
+11. What is Cluster Label?
+A cluster label is the number assigned to a group.
+
+Example:
+- Cluster 0
+- Cluster 1
+- Cluster 2
+These numbers are identifiers, not actual species names.
+12. What is the Difference Between Cluster and Class?
+Class: A predefined category provided in labeled data.
+
+Cluster: A group discovered by an unsupervised algorithm.
+
+Your experiment does not use the Iris species labels during clustering.
+
+The labels are used only afterward to check the results.

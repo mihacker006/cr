@@ -1,0 +1,238 @@
+Environment: 4 × 4 Grid World | Reinforcement Learning
+1. What is Reinforcement Learning?
+Reinforcement Learning is a machine learning technique in which an agent learns by interacting with an environment.
+
+The agent performs actions and receives rewards or penalties.
+
+The goal is to learn actions that maximize the total reward.
+
+Examples:
+- Robot navigation.
+- Game-playing agents.
+- Traffic signal control.
+- Path finding.
+2. What is an Agent?
+An agent is the learner or decision-maker.
+
+It interacts with the environment and chooses actions.
+
+Example:
+
+A robot moving through a room is an agent.
+3. What is an Environment?
+The environment is the world in which the agent operates.
+
+It provides states, rewards, and the results of actions.
+
+In your experiment, the environment is a 4 × 4 Grid World.
+4. What is a State?
+A state represents the current position or situation of the agent.
+
+In your experiment, each grid cell represents a state.
+
+There are 16 states:
+\[
+0,1,2,\ldots,15
+\]
+
+State 0 is the starting position.
+
+State 15 is the goal.
+5. What is an Action?
+An action is a movement or decision made by the agent.
+
+Your experiment uses four actions:
+- Up.
+- Down.
+- Left.
+- Right.
+The agent chooses an action to move toward the goal.
+6. What is a Reward?
+A reward is feedback given to the agent after an action.
+
+It tells the agent whether the action was useful.
+
+Your experiment uses:
+- -1 for every step.
+- +10 for reaching the goal.
+The step penalty encourages the agent to find a shorter path.
+7. What is a Policy?
+A policy is a strategy used by the agent to select actions.
+
+It tells the agent what action to take in a particular state.
+
+Example:
+
+If the agent is at the starting position, the policy may suggest moving down or right.
+
+The learned policy in your experiment shows arrows pointing toward the goal.
+8. What is a Q-Table?
+A Q-table stores the expected value of taking an action in a particular state.
+
+It contains:
+- Rows: States.
+- Columns: Actions.
+Your experiment has:
+- 16 states.
+- 4 actions.
+Therefore:
+\[
+Q\text{-table size}=16\times4
+\]
+
+\[
+\boxed{64\text{ Q-values}}
+\]
+
+Each value tells the agent how useful an action is in a particular state.
+9. What is Q-Value?
+A Q-value represents the expected future reward from taking an action in a state and then following the learned policy.
+
+Higher Q-values indicate better actions.
+
+Example:
+
+If moving right has a higher Q-value than moving up, the agent may prefer moving right.
+10. What is Q-Learning?
+Q-Learning is a reinforcement learning algorithm that learns the best action for each state.
+
+It updates Q-values using rewards and the best estimated future reward.
+
+It is called a model-free algorithm because it does not require a complete model of the environment.
+11. Q-Learning Formula
+\[
+Q(s,a)\leftarrow Q(s,a)+
+\alpha\left[
+r+\gamma\max_{a'}Q(s',a')-Q(s,a)
+\right]
+\]
+
+Where:
+- \(s\) = current state
+- \(a\) = current action
+- \(r\) = reward
+- \(s'\) = next state
+- \(\alpha\) = learning rate
+- \(\gamma\) = discount factor
+Meaning of the Formula
+The agent:
+1. Checks the current Q-value.
+2. Takes an action.
+3. Receives a reward.
+4. Observes the next state.
+5. Estimates the best future reward.
+6. Updates the Q-value.
+12. What is Learning Rate (Alpha)?
+Learning rate controls how much new information changes the Q-value.
+\[
+0\leq\alpha\leq1
+\]
+
+- Small alpha: Learns slowly.
+- Large alpha: Learns quickly.
+- Alpha = 0: Does not update.
+- Alpha = 1: Uses the new estimate completely.
+Your experiment uses:
+\[
+\alpha=0.1
+\]
+
+13. What is Discount Factor (Gamma)?
+Gamma controls the importance of future rewards.
+\[
+0\leq\gamma\leq1
+\]
+
+- Gamma close to 0: Focuses more on immediate rewards.
+- Gamma close to 1: Gives more importance to future rewards.
+Your experiment uses:
+\[
+\gamma=0.9
+\]
+
+This means future rewards are important.
+14. What is Exploration?
+Exploration means trying different actions to discover better choices.
+
+Example:
+
+The agent randomly moves through the grid to discover the goal.
+
+Exploration helps the agent learn about the environment.
+15. What is Exploitation?
+Exploitation means choosing the best action based on what the agent has already learned.
+
+Example:
+
+The agent follows the path that has the highest known Q-values.
+16. What is Epsilon-Greedy?
+Epsilon-greedy is an action-selection strategy that balances exploration and exploitation.
+
+It uses epsilon (\(\epsilon\)).
+
+With probability epsilon:
+
+The agent chooses a random action.
+
+With probability \(1-\epsilon\):
+
+The agent chooses the action with the highest Q-value.
+17. What is Epsilon Decay?
+Epsilon decay gradually reduces the exploration rate.
+
+At the beginning, the agent explores more.
+
+Later, it exploits what it has learned.
+
+Your experiment uses:
+- Initial epsilon = 1.0.
+- Final epsilon = 0.05.
+This means exploration decreases during training.
+18. What is an Episode?
+An episode is one complete learning attempt.
+
+It begins at the starting state and continues until the agent reaches the goal or the episode ends.
+
+Your experiment trains the agent for 1000 episodes.
+19. What is an Optimal Policy?
+An optimal policy is a strategy that produces the highest possible expected reward.
+
+In your Grid World, the optimal policy moves the agent toward the goal using the shortest path.
+
+The goal is at the bottom-right corner.
+
+The shortest path from the top-left corner requires:
+- 3 downward moves.
+- 3 rightward moves.
+Total:
+\[
+\boxed{6\text{ moves}}
+\]
+
+20. What is the Difference Between Supervised and Reinforcement Learning?
+Supervised Learning	Reinforcement Learning
+Learns from labeled examples	Learns from interaction
+Uses input and correct output	Uses states, actions and rewards
+Predicts labels or values	Learns a policy
+Example: Logistic Regression	Example: Q-Learning
+
+21. What is the Difference Between Q-Learning and Deep Q-Learning?
+Q-Learning: Uses a table to store Q-values.
+
+Deep Q-Learning: Uses a neural network to estimate Q-values.
+
+Q-Learning is suitable for small state spaces.
+
+Deep Q-Learning is useful for large or complex state spaces where a Q-table would become too large.
+22. Results of Your Experiment
+Your experiment uses:
+- 4 × 4 Grid World.
+- 16 states.
+- 4 actions.
+- 1000 episodes.
+- Learning rate = 0.1.
+- Discount factor = 0.9.
+- Epsilon decreases from 1.0 to 0.05.
+The agent learns to move toward the goal.
+
+The reward increases during training because the agent learns a better path.

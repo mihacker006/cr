@@ -1,0 +1,111 @@
+Dataset: Breast Cancer Wisconsin | Logistic Regression, L1 and L2
+1. What is Regularization?
+Regularization is a technique used to reduce overfitting in machine learning.
+
+It adds a penalty to the model to prevent coefficients from becoming unnecessarily large.
+
+Main purpose: Improve the model's ability to predict unseen data.
+2. What is Overfitting?
+Overfitting happens when the model learns the training data very closely but does not perform well on new data.
+
+Example:
+
+A model gets 100% training accuracy but only 80% testing accuracy.
+
+This indicates that the model may have memorized the training data.
+3. What is Underfitting?
+Underfitting happens when the model is too simple and cannot learn the important patterns.
+
+It usually gives poor results on both training and testing data.
+4. What is Ridge Regression?
+Ridge regression uses L2 regularization.
+
+It adds a penalty based on the square of the model coefficients.
+
+Formula:
+\[
+Loss=MSE+\lambda\sum_{j=1}^{p}w_j^2
+\]
+
+Where:
+- MSE = prediction error
+- \(\lambda\) = regularization strength
+- \(w_j\) = model coefficients
+Ridge reduces large coefficients but usually does not make them exactly zero.
+Advantages
+- Reduces overfitting.
+- Helps with multicollinearity.
+- Keeps all features in the model.
+- Makes coefficients smaller.
+5. What is Lasso Regression?
+Lasso stands for Least Absolute Shrinkage and Selection Operator.
+
+It uses L1 regularization.
+
+Formula:
+\[
+Loss=MSE+\lambda\sum_{j=1}^{p}|w_j|
+\]
+
+Lasso can make some coefficients exactly zero.
+
+This means it can automatically remove less useful features.
+Advantages
+- Reduces overfitting.
+- Performs feature selection.
+- Creates simpler models.
+- Can reduce the number of input features.
+6. Ridge vs Lasso
+Ridge (L2)	Lasso (L1)
+Uses squared coefficients	Uses absolute coefficients
+Shrinks coefficients	Shrinks coefficients
+Usually keeps all features	Can make coefficients zero
+Helps with multicollinearity	Helps with feature selection
+
+7. What is Logistic Regression?
+Logistic Regression is a supervised machine learning algorithm used for classification.
+
+It predicts the probability that an input belongs to a particular class.
+
+Example:
+
+Predicting whether a tumor is benign or malignant.
+
+Although its name contains regression, it is commonly used for classification.
+8. Logistic Regression with Regularization
+In your experiment:
+- Baseline: Logistic Regression.
+- L1: Lasso-style regularization.
+- L2: Ridge-style regularization.
+L1 and L2 regularization help control model complexity.
+
+Important: Smaller C in scikit-learn Logistic Regression means stronger regularization.
+
+Larger C means weaker regularization.
+9. What is Multicollinearity?
+Multicollinearity happens when input features are strongly correlated.
+
+Example:
+
+Two measurements describe almost the same information.
+
+It can make model coefficients unstable.
+
+Ridge regularization is especially useful for reducing the effect of multicollinearity.
+10. What is a Correlation Matrix?
+A correlation matrix shows the relationship between numerical features.
+
+Correlation values range from -1 to +1.
+- +1: Perfect positive relationship.
+- -1: Perfect negative relationship.
+- 0: No linear relationship.
+A heatmap is a visual representation of the correlation matrix.
+11. What is a Confusion Matrix?
+A confusion matrix shows how many predictions were correct and incorrect.
+
+It contains:
+- True Positive
+- True Negative
+- False Positive
+- False Negative
+It is used to evaluate classification models.

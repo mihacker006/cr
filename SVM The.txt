@@ -1,0 +1,93 @@
+Dataset: Wine | 178 samples | 13 features | 3 classes
+1. What is SVM?
+SVM stands for Support Vector Machine.
+
+It is a supervised machine learning algorithm used for classification and regression.
+
+It finds a boundary that separates different classes.
+2. What is a Hyperplane?
+A hyperplane is a decision boundary that separates classes.
+
+In two dimensions, it is a line.
+
+In three dimensions, it is a plane.
+
+In higher dimensions, it is called a hyperplane.
+3. What is a Margin?
+Margin is the distance between the decision boundary and the nearest data points from different classes.
+
+SVM tries to find a boundary with the maximum margin.
+
+A larger margin generally helps the model generalize better.
+4. What are Support Vectors?
+Support vectors are the data points closest to the decision boundary.
+
+They are important because they determine the position of the boundary.
+
+Changing support vectors can change the decision boundary.
+5. What is a Kernel?
+A kernel helps SVM handle data that cannot be separated easily using a straight line.
+
+It allows the algorithm to create more flexible decision boundaries.
+
+Your experiment uses three kernels.
+6. Linear Kernel
+The linear kernel creates a straight decision boundary.
+
+It is suitable when classes can be separated approximately using a line or hyperplane.
+
+Formula:
+\[
+K(x,y)=x^Ty
+\]
+
+7. Polynomial Kernel
+The polynomial kernel creates more complex decision boundaries.
+
+It can model relationships involving polynomial combinations of features.
+
+It is useful when data has a curved pattern.
+8. RBF Kernel
+RBF stands for Radial Basis Function.
+
+It creates flexible nonlinear decision boundaries.
+
+It is useful when the relationship between classes is complex.
+
+Formula:
+\[
+K(x,y)=e^{-\gamma\|x-y\|^2}
+\]
+
+Where \(\gamma\) controls how strongly the kernel responds to nearby points.
+9. What is C in SVM?
+C is a regularization parameter.
+
+It controls the balance between classification errors and margin size.
+- Large C: Tries harder to classify training samples correctly.
+- Small C: Allows more training errors to obtain a wider margin.
+10. Why is Feature Scaling Important in SVM?
+SVM uses distances between data points.
+
+Features with large numerical values can dominate smaller features.
+
+Scaling helps features contribute more fairly.
+11. What is Macro Average?
+Macro averaging calculates a metric separately for each class and then takes the simple average.
+
+Example:
+\[
+Macro\ Precision=
+\frac{P_1+P_2+P_3}{3}
+\]
+
+It gives each class equal importance.
+
+Your experiment uses macro precision, recall, and F1-score because the Wine dataset has three classes.
+12. Linear vs Polynomial vs RBF
+Kernel	Decision boundary	Main use
+Linear	Straight	Approximately linear data
+Polynomial	Curved	Polynomial relationships
+RBF	Flexible nonlinear	Complex relationships
+
+Your experiment finds that RBF performs best on the Wine dataset.

@@ -1,0 +1,141 @@
+Dataset: Breast Cancer Wisconsin | Decision Tree, Random Forest, Gradient Boosting and AdaBoost
+1. What is Ensemble Learning?
+Ensemble learning is a machine learning technique that combines multiple models to produce a better prediction.
+
+Instead of depending on one model, it uses several models together.
+
+The goal is to improve:
+- Accuracy.
+- Stability.
+- Generalization.
+- Prediction performance.
+2. What is a Baseline Model?
+A baseline model is a simple model used as a reference for comparison.
+
+It helps us understand whether a more advanced model performs better.
+
+Your experiment uses a Decision Tree as the baseline.
+3. What is a Decision Tree?
+A Decision Tree is a supervised machine learning algorithm used for classification and regression.
+
+It makes predictions using a tree-like structure.
+
+The tree contains:
+
+Root node: The starting point.
+
+Decision node: A condition or question.
+
+Branch: The result of a decision.
+
+Leaf node: The final prediction.
+
+Example:
+
+             Radius?
+             /     \
+          Small    Large
+           /         \
+        Benign     Malignant
+
+
+
+4. What is a Weak Learner?
+A weak learner is a model that performs only moderately well on its own.
+
+A simple Decision Tree can act as a weak learner in an ensemble.
+
+When multiple learners are combined properly, they may produce better results.
+5. What is Random Forest?
+Random Forest is an ensemble learning algorithm that combines multiple Decision Trees.
+
+It uses a technique called bagging.
+
+Each tree is trained using a random sample of the training data and a random selection of features.
+
+The final prediction is obtained by combining the predictions of the trees.
+How Random Forest Works
+1. Create random samples from the training dataset.
+2. Train multiple Decision Trees.
+3. Each tree makes a prediction.
+4. Combine the predictions.
+5. Select the final class using majority voting.
+6. What is Bagging?
+Bagging stands for Bootstrap Aggregating.
+
+It trains multiple models independently using different random samples of the training data.
+
+The predictions are combined.
+Advantages of Bagging
+- Reduces variance.
+- Helps reduce overfitting.
+- Improves stability.
+- Allows models to be trained independently.
+Random Forest is a bagging-based ensemble.
+7. What is Boosting?
+Boosting is an ensemble technique that trains models sequentially.
+
+Each new model focuses more on the mistakes made by previous models.
+
+The final prediction combines the models.
+
+Boosting can improve performance by correcting earlier errors.
+8. What is Gradient Boosting?
+Gradient Boosting builds models one after another.
+
+Each new model attempts to improve the previous model's predictions by learning from its errors.
+
+It combines the contributions of multiple weak learners.
+9. What is AdaBoost?
+AdaBoost stands for Adaptive Boosting.
+
+It combines multiple weak learners into a stronger model.
+
+It gives more importance to samples that previous learners classified incorrectly.
+How AdaBoost Works
+1. Start with equal weights for training samples.
+2. Train a weak learner.
+3. Identify incorrectly classified samples.
+4. Increase the importance of difficult samples.
+5. Train the next learner.
+6. Combine all learners to make the final prediction.
+10. Random Forest vs Boosting
+Random Forest	Boosting
+Uses bagging	Uses sequential learning
+Trees are trained independently	Models depend on previous models
+Combines tree votes	Corrects previous errors
+Mainly reduces variance	Can reduce bias and improve prediction
+
+11. What is Cross-Validation?
+Cross-validation is a technique used to evaluate a model using different portions of the dataset.
+
+It gives a more reliable performance estimate than using only one train-test split.
+12. What is 5-Fold Cross-Validation?
+The dataset is divided into five parts.
+
+Each part is used once for testing, while the remaining four parts are used for training.
+
+This process repeats five times.
+
+The final score is the average of the five scores.
+\[
+CV\ Score=\frac{S_1+S_2+S_3+S_4+S_5}{5}
+\]
+
+13. What is Feature Importance?
+Feature importance tells us which input features contribute more to a model's predictions.
+
+Random Forest can estimate feature importance.
+
+In your experiment, the model identifies important measurements related to tumor size and shape.
+14. Results of Your Experiment
+Your experiment compares:
+- Decision Tree.
+- Random Forest.
+- Gradient Boosting.
+- AdaBoost.
+The Decision Tree obtains perfect training accuracy but lower test accuracy.
+
+This indicates overfitting.
+
+The ensemble models perform better on the test data because combining multiple trees helps reduce the weaknesses of an individual tree.

@@ -1,0 +1,101 @@
+Dataset: Digits | 64 features | 10 classes
+1. What is Dimensionality Reduction?
+Dimensionality reduction is the process of reducing the number of input features while keeping important information.
+
+Example:
+
+A dataset contains 64 features. We reduce it to 20 features.
+
+This makes the dataset smaller and easier to process.
+
+Advantages:
+- Reduces computational time.
+- Uses less memory.
+- Removes unnecessary information.
+- Helps visualize high-dimensional data.
+- May reduce overfitting.
+2. What is PCA?
+PCA stands for Principal Component Analysis.
+
+It is a dimensionality reduction technique that converts many original features into a smaller number of new features called principal components.
+
+PCA is an unsupervised technique because it does not use class labels.
+How PCA works
+1. Standardize the dataset.
+2. Calculate the covariance matrix.
+3. Find eigenvalues and eigenvectors.
+4. Select the components with the highest eigenvalues.
+5. Transform the original data into the selected components.
+What is a Principal Component?
+A principal component is a new feature created by combining the original features.
+
+The first principal component captures the maximum possible variation in the data.
+
+The second principal component captures the next highest variation and is perpendicular to the first.
+3. What is Variance?
+Variance tells us how much the data values differ from their average.
+
+High variance means the data is spread out.
+
+Low variance means the data is close to its average.
+
+PCA tries to preserve the important variation in the dataset.
+4. What are Eigenvalues and Eigenvectors?
+Eigenvalues: Tell us how much information or variance is represented by each principal component.
+
+Eigenvectors: Tell us the direction of each principal component.
+
+In PCA:
+- Higher eigenvalue means more variance.
+- Lower eigenvalue means less variance.
+5. What is Explained Variance?
+Explained variance tells us how much of the original information is retained by a principal component.
+
+Example:
+
+If PCA retains 95% variance, it means the selected components preserve approximately 95% of the original data variation.
+
+Your experiment reduces the 64 digit-image features to approximately 39 components while keeping 95% variance.
+6. What is LDA?
+LDA stands for Linear Discriminant Analysis.
+
+It is a dimensionality reduction technique that tries to separate different classes.
+
+Unlike PCA, LDA uses class labels.
+
+PCA: Finds directions with maximum overall variance.
+
+LDA: Finds directions that help separate classes.
+How LDA works
+1. Calculate the mean of each class.
+2. Calculate within-class variation.
+3. Calculate between-class variation.
+4. Find directions that maximize class separation.
+5. Transform the data into the selected components.
+For a dataset containing \(C\) classes, LDA can produce at most:
+\[
+C-1
+\]
+
+components.
+
+Your Digits dataset has 10 classes.
+
+Therefore:
+\[
+10-1=9
+\]
+
+Maximum LDA components = 9.
+7. PCA vs LDA
+PCA	LDA
+Unsupervised	Supervised
+Does not use class labels	Uses class labels
+Preserves overall variance	Separates classes
+Useful for compression	Useful for classification-related reduction
+Components based on variance	Components based on class separation
+
+8. What is Computational Efficiency?
+Computational efficiency means completing a task using less time, memory, and processing power.
+
+Reducing 64 features to fewer features can make model training faster.

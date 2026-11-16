@@ -1,0 +1,110 @@
+Dataset: Breast Cancer Wisconsin | 569 samples | 30 features
+1. What is Classification?
+Classification is a supervised machine learning technique used to predict categories or classes.
+
+Examples:
+- Spam or not spam.
+- Benign or malignant.
+- Pass or fail.
+- Cat or dog.
+2. What is Binary Classification?
+Binary classification predicts one of two possible classes.
+
+Example:
+- Class 0: Malignant.
+- Class 1: Benign.
+Your experiment uses these two classes.
+3. What is Logistic Regression?
+Logistic Regression predicts the probability of a sample belonging to a class.
+
+It uses the sigmoid function to convert a numerical value into a probability.
+4. What is the Sigmoid Function?
+The sigmoid function converts values into a range between 0 and 1.
+
+Formula:
+\[
+\sigma(z)=\frac{1}{1+e^{-z}}
+\]
+
+Where \(z\) is the model's linear output.
+
+Interpretation:
+- Probability close to 0: Class 0.
+- Probability close to 1: Class 1.
+A threshold is used to decide the predicted class.
+
+For a threshold of 0.5:
+- Probability ≥ 0.5: Class 1.
+- Probability < 0.5: Class 0.
+5. What is Accuracy?
+Accuracy measures the percentage of correct predictions.
+\[
+Accuracy=\frac{TP+TN}{TP+TN+FP+FN}
+\]
+
+Higher accuracy means more predictions are correct.
+
+However, accuracy alone may not be sufficient when classes are imbalanced.
+6. What is Precision?
+Precision tells us how many predicted positive samples are actually positive.
+\[
+Precision=\frac{TP}{TP+FP}
+\]
+
+High precision means fewer false positive predictions.
+7. What is Recall?
+Recall tells us how many actual positive samples are correctly identified.
+\[
+Recall=\frac{TP}{TP+FN}
+\]
+
+High recall means fewer positive samples are missed.
+8. What is F1-Score?
+F1-score combines precision and recall.
+\[
+F1=2\frac{Precision\times Recall}{Precision+Recall}
+\]
+
+It is useful when we want to balance precision and recall.
+9. What is a Confusion Matrix?
+A confusion matrix compares actual values with predicted values.
+
+For your experiment, class 1 (benign) is the positive class.
+Actual / Predicted	Malignant (0)	Benign (1)
+Malignant (0)	TN	FP
+Benign (1)	FN	TP
+
+TP: Benign correctly predicted as benign.
+
+TN: Malignant correctly predicted as malignant.
+
+FP: Malignant incorrectly predicted as benign.
+
+FN: Benign incorrectly predicted as malignant.
+
+The dangerous mistake in this experiment is a malignant tumor being predicted as benign.
+10. What is ROC Curve?
+ROC stands for Receiver Operating Characteristic.
+
+It shows how the classifier performs at different probability thresholds.
+
+It plots:
+- True Positive Rate.
+- False Positive Rate.
+A good classifier has a curve closer to the top-left corner.
+11. What is AUC?
+AUC stands for Area Under the Curve.
+
+It measures how well a model separates the two classes.
+
+Interpretation:
+- AUC = 1: Perfect separation.
+- AUC = 0.5: Similar to random guessing.
+- AUC below 0.5: Poor separation in the usual positive-class interpretation.
+Your experiment obtains approximately 0.99 AUC, which indicates excellent class separation.
+12. What is Stratified Train-Test Split?
+A stratified split maintains approximately the same class proportions in training and testing data.
+
+Example:
+
+If the dataset contains 60% class 0 and 40% class 1, both training and testing sets should approximately maintain this distribution.

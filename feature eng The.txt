@@ -1,0 +1,146 @@
+Dataset: Titanic
+1. What is Feature Engineering?
+Feature engineering is the process of preparing raw data so that a machine learning model can understand it and make better predictions.
+
+Real-world datasets often contain missing values, text values, and features with different scales.
+
+Feature engineering helps convert this data into a clean and useful format.
+
+Example: A dataset contains the age of passengers, but some ages are missing. We fill the missing ages before training the model.
+2. What is Data Preprocessing?
+Data preprocessing means cleaning and preparing data before giving it to a machine learning algorithm.
+
+It includes:
+- Handling missing values
+- Removing unnecessary columns
+- Encoding categorical data
+- Scaling numerical data
+- Splitting data into training and testing sets
+3. What are Missing Values?
+Missing values are values that are not available in a dataset.
+
+They may occur because:
+- A person did not provide information.
+- Data was not collected properly.
+- A sensor or system failed.
+Example:
+Name	Age
+A	20
+B	Missing
+C	22
+
+The age of person B is missing.
+Methods to handle missing values
+Mean: Replace missing values with the average.
+
+Median: Replace missing values with the middle value.
+
+Mode: Replace missing values with the most frequently occurring value.
+
+Dropping: Remove rows or columns that contain too many missing values.
+
+In your Titanic experiment:
+- Age is filled using median.
+- Embarked is filled using the most frequent value.
+- Deck is removed because it contains too many missing values.
+4. What is Mean, Median and Mode?
+Mean: Average of all values.
+\[
+Mean=\frac{\text{Sum of values}}{\text{Number of values}}
+\]
+
+Median: Middle value after arranging the values in ascending order.
+
+Mode: Value that occurs most frequently.
+
+Median is often useful when data contains outliers because it is less affected by extreme values.
+5. What is Categorical Data?
+Categorical data represents groups or categories instead of numerical measurements.
+
+Examples:
+- Gender
+- City
+- Passenger class
+- Type of product
+Machine learning algorithms generally require numerical input, so categorical values need to be converted into numbers.
+6. What is One-Hot Encoding?
+One-hot encoding converts categorical values into separate binary columns.
+
+Example:
+
+Original data:
+Gender
+Male
+Female
+
+After encoding:
+Male	Female
+1	0
+0	1
+
+Each category gets its own column.
+
+Advantage: The model can understand categorical information without treating categories as ordered numbers.
+7. What is Feature Scaling?
+Feature scaling means bringing numerical features into a similar range.
+
+Example:
+- Age may range from 1 to 80.
+- Fare may range from 10 to 500.
+Large values may influence some machine learning algorithms more strongly.
+
+Scaling helps prevent this problem.
+Standardization
+Standardization converts data so that it has approximately:
+- Mean = 0
+- Standard deviation = 1
+Formula:
+\[
+z=\frac{x-\mu}{\sigma}
+\]
+
+Where:
+- \(x\) = original value
+- \(\mu\) = mean
+- \(\sigma\) = standard deviation
+Normalization
+Normalization commonly converts values into a range between 0 and 1.
+\[
+x'=\frac{x-x_{\min}}{x_{\max}-x_{\min}}
+\]
+
+8. What is Data Leakage?
+Data leakage happens when information from the test data is accidentally used during training or preprocessing.
+
+It can make the model appear more accurate than it really is.
+
+Example: Calculating the mean using the entire dataset before splitting it into training and testing data.
+
+To prevent leakage:
+1. Split the data first.
+2. Fit the imputer and scaler using training data.
+3. Apply the same fitted transformations to test data.
+9. What is a Pipeline?
+A pipeline combines multiple preprocessing and machine learning steps into one process.
+
+Example:
+
+Raw Data
+   ↓
+Missing Value Handling
+   ↓
+Encoding
+   ↓
+Feature Scaling
+   ↓
+Machine Learning Model
+   ↓
+Prediction
+
+
+
+Advantages:
+- Makes the process easier.
+- Reduces mistakes.
+- Helps prevent data leakage.
+- Keeps preprocessing consistent.

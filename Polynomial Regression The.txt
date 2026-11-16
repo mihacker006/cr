@@ -1,0 +1,101 @@
+Dataset: Auto MPG | Predict MPG using horsepower
+1. What is Polynomial Regression?
+Polynomial regression is a regression technique used when the relationship between input and output is curved instead of a straight line.
+
+It creates additional features using powers of the original input.
+
+Example:
+
+Original feature:
+\[
+x
+\]
+
+Polynomial features:
+\[
+x,\ x^2,\ x^3
+\]
+
+This allows the model to fit curved relationships.
+2. Polynomial Regression Formula
+For degree 2:
+\[
+y=b_0+b_1x+b_2x^2
+\]
+
+For degree 3:
+\[
+y=b_0+b_1x+b_2x^2+b_3x^3
+\]
+
+Higher degrees create more complex curves.
+3. What is Polynomial Degree?
+Degree tells us the highest power of the input feature.
+
+Examples:
+- Degree 1: Straight line.
+- Degree 2: Quadratic curve.
+- Degree 3: Cubic curve.
+- Degree 10: More complex curve.
+4. What is Underfitting?
+Underfitting happens when the model is too simple to understand the pattern in the data.
+
+Example:
+
+Using a straight line to fit data that has a curved relationship.
+
+Characteristics:
+- Training error is high.
+- Testing error is high.
+- Model has high bias.
+5. What is Overfitting?
+Overfitting happens when a model learns the training data too closely, including noise and unnecessary details.
+
+Characteristics:
+- Training error is very low.
+- Testing error may be high.
+- Model has high variance.
+Example:
+
+A degree 10 polynomial may fit the training data very closely but perform poorly on unseen data.
+6. What is Bias?
+Bias is the error caused by a model being too simple to capture the true relationship.
+
+High bias usually leads to underfitting.
+7. What is Variance?
+Variance describes how much the model changes when the training data changes.
+
+High variance means the model is sensitive to the training data.
+
+High variance often leads to overfitting.
+8. Bias-Variance Trade-Off
+The bias-variance trade-off means balancing model simplicity and model complexity.
+- Simple model: May underfit.
+- Very complex model: May overfit.
+- Balanced model: Learns the pattern and performs well on new data.
+Your experiment compares polynomial degrees from 1 to 10.
+
+The lower degrees fit the relationship better than degree 1, while higher degrees eventually add complexity without improving test performance.
+9. What is MSE in Polynomial Regression?
+MSE measures the prediction error.
+
+Your experiment compares training MSE and testing MSE for different polynomial degrees.
+
+A good model should have:
+- Low training error.
+- Low testing error.
+- A small difference between training and testing errors.
+10. What is a Model Pipeline?
+A pipeline combines feature scaling, polynomial feature generation, and regression.
+
+Example:
+
+Input Data
+    ↓
+StandardScaler
+    ↓
+Polynomial Features
+    ↓
+Linear Regression
+    ↓
+Prediction

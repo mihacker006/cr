@@ -1,0 +1,103 @@
+Dataset: Iris | StandardScaler | DBSCAN
+1. What is DBSCAN?
+DBSCAN stands for Density-Based Spatial Clustering of Applications with Noise.
+
+It is an unsupervised clustering algorithm.
+
+It groups points that are located in dense regions and identifies points in sparse regions as noise.
+
+Unlike K-Means, DBSCAN does not require the number of clusters to be specified in advance.
+2. What is Density-Based Clustering?
+Density-based clustering groups data points based on how closely they are located to each other.
+
+A dense region contains many nearby points.
+
+A sparse region contains fewer nearby points.
+
+DBSCAN uses density to identify clusters.
+3. What is Epsilon (eps)?
+Epsilon is the maximum distance used to define the neighborhood of a point.
+
+It is commonly written as:
+\[
+\varepsilon
+\]
+
+If another point is within this distance, it belongs to the neighborhood.
+Effect of epsilon
+Small epsilon:
+- Smaller neighborhoods.
+- More points may become noise.
+- Clusters may split into smaller groups.
+Large epsilon:
+- Larger neighborhoods.
+- More points may become connected.
+- Clusters may merge.
+4. What is min_samples?
+min_samples is the minimum number of points needed in a neighborhood to form a dense region.
+
+It helps DBSCAN decide whether a point is a core point.
+
+A higher value makes it harder for a region to be considered dense.
+5. What is a Core Point?
+A core point is a point that has enough nearby points within its epsilon neighborhood.
+
+It belongs to a dense region.
+6. What is a Border Point?
+A border point is located near a core point but does not have enough nearby points to become a core point itself.
+
+It can still belong to a cluster.
+7. What is a Noise Point?
+A noise point is a point that does not belong to any cluster.
+
+It is also called an outlier.
+
+In DBSCAN, noise points are assigned the label:
+\[
+-1
+\]
+
+8. How Does DBSCAN Work?
+1. Select epsilon and min_samples.
+2. Choose an unvisited point.
+3. Find its neighboring points.
+4. Check whether it is a core point.
+5. If it is a core point, create or expand a cluster.
+6. Add connected density-reachable points.
+7. Mark points that cannot belong to a cluster as noise.
+9. What is Density Reachability?
+A point is density-reachable when it can be connected to another point through a sequence of nearby dense points.
+
+This allows DBSCAN to create clusters that are connected through dense regions.
+10. K-Means vs DBSCAN
+K-Means	DBSCAN
+Requires K	Does not require K
+Uses centroids	Uses density
+Usually creates roughly round clusters	Can find irregularly shaped clusters
+Assigns points to clusters	Can identify noise points
+Sensitive to centroid initialization	Sensitive to epsilon and min_samples
+
+11. Why is Scaling Important in DBSCAN?
+DBSCAN depends on distances between points.
+
+If features have very different scales, one feature may dominate the distance calculation.
+
+StandardScaler helps bring the features into a comparable range.
+12. What is an Outlier?
+An outlier is a data point that is different from most other points.
+
+It may be:
+- A measurement error.
+- An unusual observation.
+- A rare but valid data point.
+DBSCAN can identify outliers as noise.
+13. Results of Your Experiment
+Your experiment uses:
+- epsilon = 0.5
+- min_samples = 5
+It finds two clusters and labels 34 points as noise.
+
+The two clusters mainly represent:
+- Setosa.
+- A combined group of versicolor and virginica.
+The species labels are used only for checking the clusters, not for training.
